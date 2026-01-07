@@ -2,12 +2,14 @@ const nodemailer = require('nodemailer');
 
 // 1. Create Transporter
 // using Gmail for this POC. 
-// Requires "App Password" if 2FA is on, or "Less Secure Apps" (deprecated)
+// Switching to Port 587 (TLS) which is often more reliable on cloud hosts than 465
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
     auth: {
-        user: process.env.EMAIL_USER, // e.g., 'yourname@gmail.com'
-        pass: process.env.EMAIL_PASS  // e.g., 'xxxx xxxx xxxx xxxx'
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     }
 });
 
