@@ -571,20 +571,23 @@ async function submitSurvey() {
     const needle = document.querySelector('.neon-needle');
     const percentDisplay = document.getElementById('digitalPercent');
 
-    // 1. Needle Sweep
-    setTimeout(() => {
-        if (needle) needle.style.transform = 'rotate(135deg)'; // Max RPM
-    }, 100);
+    // 1. Needle Sweep (Synchronized to ~12s)
+    if (needle) {
+        needle.style.transition = 'transform 12s cubic-bezier(0.25, 1, 0.5, 1)'; // Slow ease-out over 12s
+        setTimeout(() => {
+            needle.style.transform = 'rotate(135deg)'; // Max RPM
+        }, 100);
+    }
 
-    // 2. Digital Counter
+    // 2. Digital Counter (0-100 in 12s -> 120ms per tick)
     let counter = 0;
     const countInterval = setInterval(() => {
         counter++;
         if (percentDisplay) percentDisplay.textContent = `${Math.min(counter, 100)}%`;
         if (counter >= 100) clearInterval(countInterval);
-    }, 35); // 3.5s total approx
+    }, 120);
 
-    // 3. Text Cycling
+    // 3. Text Cycling (Slower to match 12s duration)
     const phrases = [
         "CALIBRATING FUEL MAPS...",
         "PRE-IGNITION CHECKS...",
@@ -597,7 +600,7 @@ async function submitSurvey() {
         pIdx = (pIdx + 1) % phrases.length;
         const t = document.getElementById('loaderText');
         if (t) t.textContent = phrases[pIdx];
-    }, 700);
+    }, 2000); // 2s per text change
 
 
     try {
@@ -856,7 +859,7 @@ function renderLeadForm(purpose) {
                 <input type="email" placeholder="Email Address" class="input-field" id="bEmail">
                 <input type="tel" placeholder="Phone Number" class="input-field" id="bPhone">
                 ${isBooking ? `
-                <input type="date" class="input-field" id="bDate">
+                <input type="date" class="input-field" id="bDate" min="${new Date().toISOString().split('T')[0]}">
                 <select class="input-field" id="bTime">
                     <option value="">Select Time Slot</option>
                     <option value="10:00 AM">10:00 AM - 11:00 AM</option>
@@ -881,12 +884,27 @@ function renderLeadForm(purpose) {
 }
 
 async function handleFormSubmit(purpose) {
-    const name = document.getElementById('bName').value;
-    const email = document.getElementById('bEmail').value;
-    const phone = document.getElementById('bPhone').value;
+    const name = document.getElementById('bName').value.trim();
+    const email = document.getElementById('bEmail').value.trim();
+    const phone = document.getElementById('bPhone').value.trim();
 
     if (!name || !email || !phone) {
         alert("Please fill in your name, email, and phone number.");
+        return;
+    }
+
+    // Email Validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert("Please enter a valid email address.");
+        return;
+    }
+
+    // Phone Validation (Indian Format: 10 digits, optional +91)
+    // Matches: 9876543210, +919876543210, 09876543210
+    const phoneRegex = /^(\+91[\-\s]?)?[0]?[6-9]\d{9}$/;
+    if (!phoneRegex.test(phone.replace(/\s+/g, ''))) {
+        alert("Please enter a valid 10-digit mobile number.");
         return;
     }
 
@@ -906,6 +924,16 @@ async function handleFormSubmit(purpose) {
             alert("Please select a date and time for your consultation.");
             return;
         }
+
+        // Validate future date
+        const selectedDate = new Date(date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset time to start of day
+        if (selectedDate < today) {
+            alert("Please select a future date for your consultation.");
+            return;
+        }
+
         payload.bookingDate = date;
         payload.bookingTime = time;
     }
