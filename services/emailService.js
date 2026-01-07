@@ -2,15 +2,14 @@ const nodemailer = require('nodemailer');
 
 // 1. Create Transporter
 // using Gmail for this POC. 
-// Switching to Port 587 (TLS) which is often more reliable on cloud hosts than 465
+// Adding 'family: 4' to force IPv4 (Fixes potential IPv6 timeouts on Render)
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // true for 465, false for other ports
+    service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    }
+    },
+    family: 4 // Force IPv4
 });
 
 /**
