@@ -39,7 +39,10 @@ const leadSchema = new mongoose.Schema({
     feedback: {
         type: String,
         required: false
-    }
+    },
+    classification: { type: String, required: false },
+    score: { type: Number, required: false },
+    reportContent: { type: String, required: false }
 });
 
 module.exports = mongoose.model('Lead', leadSchema);

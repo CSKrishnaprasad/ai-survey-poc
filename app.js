@@ -914,6 +914,8 @@ async function handleFormSubmit(purpose) {
         phone,
         type: purpose,
         reportContent: window.lastReportData ? window.lastReportData.full_report_content : null,
+        classification: window.lastReportData ? window.lastReportData.classification : null,
+        score: window.lastReportData ? window.lastReportData.score : 0,
         feedback: answers['final'] || '' // Capture feedback from the distinct 'final' question ID
     };
 
