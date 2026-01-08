@@ -571,19 +571,30 @@ async function submitSurvey() {
     const needle = document.querySelector('.neon-needle');
     const percentDisplay = document.getElementById('digitalPercent');
 
-    // 1. Needle Sweep (Synchronized to ~12s)
+    // 1. Needle Setup
     if (needle) {
-        needle.style.transition = 'transform 12s cubic-bezier(0.25, 1, 0.5, 1)'; // Slow ease-out over 12s
-        setTimeout(() => {
-            needle.style.transform = 'rotate(135deg)'; // Max RPM
-        }, 100);
+        // Start at min
+        needle.style.transform = 'rotate(-135deg)';
+        // Smooth linear movement between ticks (120ms tick)
+        needle.style.transition = 'transform 0.12s linear';
     }
 
-    // 2. Digital Counter (0-100 in 12s -> 120ms per tick)
+    // 2. Digital Counter & Needle Sync (0-100 in ~12s)
     let counter = 0;
     const countInterval = setInterval(() => {
         counter++;
-        if (percentDisplay) percentDisplay.textContent = `${Math.min(counter, 100)}%`;
+        const val = Math.min(counter, 100);
+
+        // Update Text
+        if (percentDisplay) percentDisplay.textContent = `${val}%`;
+
+        // Update Needle
+        if (needle) {
+            // Map 0-100 to -135 to 135 (270deg range)
+            const deg = -135 + ((val / 100) * 270);
+            needle.style.transform = `rotate(${deg}deg)`;
+        }
+
         if (counter >= 100) clearInterval(countInterval);
     }, 120);
 
