@@ -190,7 +190,7 @@ const questions = [
         id: 'final',
         type: 'text',
         question: "Anything else you think we should know...",
-        image: "assets/final_q.png",
+        image: "assets/final.png",
         placeholder: "Tell us about your specific car model or any other details...",
         buttonText: "Finalize Report",
         required: true

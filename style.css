@@ -1066,14 +1066,56 @@ textarea:focus {
 }
 
 @media (max-width: 768px) {
-    .gauges-grid {
-        grid-template-columns: repeat(2, 1fr);
+    /* Stack content vertically */
+    .main-dashboard-content {
+        flex-direction: column;
+        gap: 2rem;
     }
 
+    /* Single column for gauges to avoid squishing */
+    .gauges-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 2rem;
+    }
+
+    /* Reduce padding on the main card */
+    .result-card.result-card-dark {
+        padding: 1.5rem !important;
+    }
+
+    /* Smaller HUD Title */
+    .hud-title {
+        font-size: 2rem;
+        line-height: 1.1;
+    }
+
+    .hud-subtitle {
+        font-size: 1rem;
+    }
+
+    /* Expert section adjustments */
+    .expert-section {
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .expert-clipboard {
+        min-height: auto;
+        padding: 1.5rem;
+    }
+
+    /* Ensure footer buttons stack nicely */
     .action-footer {
         flex-direction: column;
         align-items: center;
         gap: 1rem;
+    }
+
+    .btn-action-orange, 
+    .btn-action-blue {
+        width: 100%;
+        font-size: 0.95rem;
     }
 }
 
