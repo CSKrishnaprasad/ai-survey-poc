@@ -5,13 +5,13 @@ const questions = [
         headline: "Think You Know Your Car?",
         subtext: "Just 20 Minutes a Day | Your Answers Will Tell the Truth",
         buttonText: "Reveal Your Driver Type!",
-        image: "assets/hero.png"
+        image: "assets/hero.webp"
     },
     {
         id: 'q1',
         type: 'choice',
         question: "When you drive on muddy or dirty roads and your car’s underbody... how soon do you usually wash your car?",
-        image: "assets/q1.png",
+        image: "assets/q1.webp",
         options: [
             { label: "Immediately after the drive", value: "immediate" },
             { label: "Next day", value: "next_day" },
@@ -23,7 +23,7 @@ const questions = [
         id: 'q2',
         type: 'choice',
         question: "When was the last time you checked your tire pressure with a proper gauge...?",
-        image: "assets/q2.png",
+        image: "assets/q2.webp",
         options: [
             { label: "Within the last week", value: "week" },
             { label: "Last month", value: "month" },
@@ -35,7 +35,7 @@ const questions = [
         id: 'q3',
         type: 'choice',
         question: "How does your car feel when you drive over small potholes or speed breakers?",
-        image: "assets/q3.png",
+        image: "assets/q3.webp",
         options: [
             { label: "Smooth and stable", value: "smooth" },
             { label: "Slightly bouncy", value: "bouncy" },
@@ -47,7 +47,7 @@ const questions = [
         id: 'q4',
         type: 'choice',
         question: "After a long highway drive, how often do you inspect your car’s brakes or tires...?",
-        image: "assets/q4.png",
+        image: "assets/q4.webp",
         options: [
             { label: "Always — I do a quick inspection", value: "always" },
             { label: "Only if I feel a difference", value: "feel" },
@@ -59,7 +59,7 @@ const questions = [
         id: 'q5',
         type: 'choice',
         question: "When was the last time your wheel alignment and balancing were done?",
-        image: "assets/q5.png",
+        image: "assets/q5.webp",
         options: [
             { label: "Within the last 3 months", value: "3m" },
             { label: "3–6 months ago", value: "6m" },
@@ -71,7 +71,7 @@ const questions = [
         id: 'q6',
         type: 'choice',
         question: "When you wash your car, do you or your detailer clean inside the wheel arches and suspension area?",
-        image: "assets/q6.png",
+        image: "assets/q6.webp",
         options: [
             { label: "Yes, always", value: "always" },
             { label: "Sometimes", value: "sometimes" },
@@ -83,7 +83,7 @@ const questions = [
         id: 'q7',
         type: 'choice',
         question: "Do you feel your headlights are as bright and clear as when the car was new?",
-        image: "assets/q7.png",
+        image: "assets/q7.webp",
         options: [
             { label: "Yes, perfectly clear", value: "clear" },
             { label: "Slightly dull but manageable", value: "dull" },
@@ -95,7 +95,7 @@ const questions = [
         id: 'q8',
         type: 'choice',
         question: "How often do you check or replace your car’s air filter or cabin filter?",
-        image: "assets/q8.png",
+        image: "assets/q8.webp",
         options: [
             { label: "Every service", value: "service" },
             { label: "Once or twice a year", value: "yearly" },
@@ -107,7 +107,7 @@ const questions = [
         id: 'q9',
         type: 'choice',
         question: "If your steering feels slightly heavier or not as smooth as before...",
-        image: "assets/q9.png",
+        image: "assets/q9.webp",
         options: [
             { label: "Immediately get it checked", value: "immediate" },
             { label: "Wait to see", value: "wait" },
@@ -119,7 +119,7 @@ const questions = [
         id: 'q10',
         type: 'choice',
         question: "When you park after a long drive, do you ever look under your car...?",
-        image: "assets/q10.png",
+        image: "assets/q10.webp",
         options: [
             { label: "Always — it’s a habit", value: "always" },
             { label: "Sometimes", value: "sometimes" },
@@ -131,14 +131,14 @@ const questions = [
         id: 'i2',
         type: 'interstitial',
         question: "Did you know? If you park in extreme sub-zero climates, your fuel can actually freeze or gel into 'ice'!",
-        image: "assets/idea.png",
+        image: "assets/idea.webp",
         buttonText: "Next"
     },
     {
         id: 'q11',
         type: 'choice',
         question: "What best describes your current situation?",
-        image: "assets/q11.png",
+        image: "assets/q11.webp",
         options: [
             { label: "Fine overall but could be better", value: "fine" },
             { label: "Noticing issues (rough ride)", value: "issues" },
@@ -150,7 +150,7 @@ const questions = [
         id: 'q12',
         type: 'choice',
         question: "What’s the main outcome you’d like to achieve with your car upgrades?",
-        image: "assets/q12.png",
+        image: "assets/q12.webp",
         options: [
             { label: "More stability, comfort, and control while driving", value: "comfort" },
             { label: "Better looks, design, and road presence", value: "looks" },
@@ -164,7 +164,7 @@ const questions = [
         id: 'q13',
         type: 'choice',
         question: "What have you tried in the past that didn’t work as well as expected?",
-        image: "assets/q13.png",
+        image: "assets/q13.webp",
         options: [
             { label: "Cheaper aftermarket products", value: "cheap" },
             { label: "Local garage (inconsistent)", value: "garage" },
@@ -177,7 +177,7 @@ const questions = [
         id: 'q14',
         type: 'choice',
         question: "Which type of solution do you believe will suit you best?",
-        image: "assets/q14.png",
+        image: "assets/q14.webp",
         options: [
             { label: "Comfort (suspension, seats)", value: "comfort" },
             { label: "Performance (power, handling)", value: "performance" },
@@ -190,7 +190,7 @@ const questions = [
         id: 'final',
         type: 'text',
         question: "Anything else you think we should know...",
-        image: "assets/final.png",
+        image: "assets/final.webp",
         placeholder: "Tell us about your specific car model or any other details...",
         buttonText: "Finalize Report",
         required: true
