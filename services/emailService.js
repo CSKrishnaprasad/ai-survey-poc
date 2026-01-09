@@ -4,11 +4,14 @@ const nodemailer = require('nodemailer');
 // using Gmail for this POC. 
 // Adding 'family: 4' to force IPv4 (Fixes potential IPv6 timeouts on Render)
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // use STARTTLS
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     },
+    // No family constraint
     connectionTimeout: 20000, // 20 seconds
     greetingTimeout: 10000,
     debug: true, // Show debug output
