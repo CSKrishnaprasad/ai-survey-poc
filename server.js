@@ -57,74 +57,54 @@ app.get('/api/admin/stats', async (req, res) => {
     try {
         await connectDB();
 
-        // 1. Fetch all leads/logs
-        // We really should join them, but for this POC we might have separate collections.
-        // Let's assume 'Lead' contains the contact info + booking, but 'SurveyLog' has the score.
-        // Actually, looking at Save Lead, we save everything there too?
-        // Let's look at server.js:234 -> new Lead(leadData). 
-        // leadData comes from client. Client has score/classification? 
-        // If not, we might need to merge. But for now let's query Lead primarily for appointments.
-
+        // 1. Fetch all leads for stats
         const leads = await Lead.find().sort({ timestamp: -1 }).limit(50);
-        const allLeads = await Lead.find(); // For aggregations
+        const allLeads = await Lead.find();
 
-        // Calculate Stats
+        // Calculate Stats from LEADS (Actionable Data)
         const totalLeads = allLeads.length;
-        const hotLeads = allLeads.filter(l => l.classification === 'Hot Lead').length || 0; // Note: 'type' might be used for classification in Lead schema? Or do we not save classification in Lead?
-        // Wait, looking at Lead.js schema... it DOES NOT have classification/score explicitly defined in the top level?
-        // It has 'type' (booking/download) and 'feedback'.
-        // We might need to look at SurveyLog for scores.
 
-        const surveyLogs = await SurveyLog.find().sort({ timestamp: -1 }).limit(50);
+        // Helper to normalize classification string (e.g., "Hot Lead" -> "Hot")
+        const getClass = (l) => (l.classification || '').toLowerCase();
 
-        // Let's compute stats primarily from SurveyLogs for scores/class
-        const allLogs = await SurveyLog.find();
-        const avgScore = allLogs.reduce((acc, curr) => acc + (curr.score || 0), 0) / (allLogs.length || 1);
+        const hots = allLeads.filter(l => getClass(l).includes('hot')).length;
+        const warms = allLeads.filter(l => getClass(l).includes('warm')).length;
+        const colds = allLeads.filter(l => getClass(l).includes('cold')).length;
 
-        const hots = allLogs.filter(l => l.classification === 'Hot Lead').length;
-        const warms = allLogs.filter(l => l.classification === 'Warm Lead').length;
-        const colds = allLogs.filter(l => l.classification === 'Cold Lead').length;
-
-        // Appointments (from Leads)
+        // Appointments
         const appointments = allLeads.filter(l => l.bookingDate).length;
 
-        // Merge Data for Recent Table
-        // We want: Name (Lead), Contact (Lead), Score (Log?), Appointment (Lead)
-        // Since we don't have a strict ID link in this POC, we'll try to display Leads mainly, 
-        // and try to match with Logs if possible (or just display Logs if no lead captured).
-        // A better approach for the dashboard table: Show LEADS (since they are actionable).
+        // Average Score (ensure numeric)
+        const validScores = allLeads.filter(l => typeof l.score === 'number' && !isNaN(l.score));
+        const avgScore = validScores.length > 0
+            ? validScores.reduce((acc, curr) => acc + curr.score, 0) / validScores.length
+            : 0;
 
-        // Let's map Leads to a cleaner format
-        const recentLeads = leads.map(l => {
-            // In the current app flow, we might pass classification/score to /save-lead endpoint?
-            // Let's check app.js submitLead form... 
-            // If we don't save score in Lead, we might miss it here.
-            // I'LL ADD score/classification to the Lead schema save in the next tool call if needed.
-            // For now, let's assume we pass it or will pass it.
-            return {
-                name: l.name,
-                email: l.email,
-                phone: l.phone,
-                bookingDate: l.bookingDate,
-                bookingTime: l.bookingTime,
-                timestamp: l.timestamp,
-                // These might be missing if not passed to save-lead
-                classification: l.classification || 'Unknown',
-                score: l.score || 0,
-                generated_report: l.reportContent || ''
-            };
-        });
+        // Recent Activity List
+        const recentLeads = leads.map(l => ({
+            name: l.name,
+            email: l.email,
+            phone: l.phone,
+            bookingDate: l.bookingDate,
+            bookingTime: l.bookingTime,
+            timestamp: l.timestamp,
+            classification: l.classification || 'Unknown',
+            score: l.score || 0,
+            generated_report: l.reportContent || ''
+        }));
 
         // Distribution for Chart
         const scoreDist = {
             labels: ['0-20', '21-40', '41-60', '61-80', '81-100'],
             values: [0, 0, 0, 0, 0]
         };
-        allLogs.forEach(l => {
-            if (l.score <= 20) scoreDist.values[0]++;
-            else if (l.score <= 40) scoreDist.values[1]++;
-            else if (l.score <= 60) scoreDist.values[2]++;
-            else if (l.score <= 80) scoreDist.values[3]++;
+
+        allLeads.forEach(l => {
+            const s = l.score || 0;
+            if (s <= 20) scoreDist.values[0]++;
+            else if (s <= 40) scoreDist.values[1]++;
+            else if (s <= 60) scoreDist.values[2]++;
+            else if (s <= 80) scoreDist.values[3]++;
             else scoreDist.values[4]++;
         });
 
