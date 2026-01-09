@@ -1,39 +1,26 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-// 1. Create Transporter
-// using Gmail for this POC. 
-// Adding 'family: 4' to force IPv4 (Fixes potential IPv6 timeouts on Render)
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // use STARTTLS
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    },
-    // No family constraint
-    connectionTimeout: 20000, // 20 seconds
-    greetingTimeout: 10000,
-    debug: true, // Show debug output
-    logger: true // Log to console
-});
+// Initialize Resend with API Key from environment variables
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
- * Sends the vehicle report email
+ * Sends the vehicle report email using Resend API
  * @param {string} toEmail 
  * @param {string} name 
  * @param {string} reportContent 
  */
 const sendReportEmail = async (toEmail, name, reportContent) => {
     try {
-        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-            console.warn("Skipping email: EMAIL_USER or EMAIL_PASS not set.");
-            return;
+        if (!process.env.RESEND_API_KEY) {
+            console.warn("Skipping email: RESEND_API_KEY not set.");
+            return false;
         }
 
-        const mailOptions = {
-            from: `"Autobacs India AI" <${process.env.EMAIL_USER}>`,
-            to: toEmail,
+        console.log(`Sending email via Resend to ${toEmail}...`);
+
+        const { data, error } = await resend.emails.send({
+            from: 'Autobacs India AI <onboarding@resend.dev>', // Using testing domain for reliability
+            to: [toEmail],
             subject: 'Your Autobacs Vehicle Diagnostics Report',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -49,14 +36,18 @@ const sendReportEmail = async (toEmail, name, reportContent) => {
                     <p>Ready to upgrade? <a href="https://autobacsindia.com" style="color: #007bff;">Visit Autobacs India</a></p>
                 </div>
             `
-        };
+        });
 
-        const info = await transporter.sendMail(mailOptions);
-        console.log("Email sent: " + info.response);
+        if (error) {
+            console.error("Resend API Error:", error);
+            return false;
+        }
+
+        console.log("Email sent successfully via Resend. ID:", data.id);
         return true;
 
     } catch (error) {
-        console.error("Error sending email:", error);
+        console.error("Error sending email via Resend:", error);
         return false;
     }
 };
