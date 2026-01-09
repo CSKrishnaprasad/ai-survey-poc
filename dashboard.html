@@ -254,11 +254,22 @@
 
     <script>
         // Simple Security Check
+        // Simple Security Check with Prompt
         const urlParams = new URLSearchParams(window.location.search);
-        const key = urlParams.get('key');
-        if (key !== 'autobacs_admin') {
-            document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;flex-direction:column;"><h2>Access Denied</h2><p>Please provide the correct admin key.</p></div>';
-            throw new Error("Access Denied");
+        let key = urlParams.get('key');
+
+        while (key !== 'autobacs_admin') {
+            key = prompt("🔒 Enter Admin Access Key:");
+            if (!key) { // Cancelled
+                document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;flex-direction:column;font-family:sans-serif;color:#333;"><h2>⛔ Access Denied</h2><p>Admin key is required.</p></div>';
+                throw new Error("Access Denied");
+            }
+            // Update URL to include key for convenience (optional, user preference)
+            if (key === 'autobacs_admin') {
+                const newUrl = new URL(window.location);
+                newUrl.searchParams.set('key', key);
+                window.history.pushState({}, '', newUrl);
+            }
         }
 
         // Global storage for leads to avoid JSON escaping issues in HTML attributes
