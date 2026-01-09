@@ -19,7 +19,7 @@ const sendReportEmail = async (toEmail, name, reportContent) => {
         console.log(`Sending email via Resend to ${toEmail}...`);
 
         const { data, error } = await resend.emails.send({
-            from: 'Autobacs India AI <onboarding@resend.dev>', // Using testing domain for reliability
+            from: process.env.RESEND_FROM_EMAIL || 'Autobacs India AI <onboarding@resend.dev>',
             to: [toEmail],
             subject: 'Your Autobacs Vehicle Diagnostics Report',
             html: `
